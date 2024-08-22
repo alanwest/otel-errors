@@ -41,7 +41,7 @@ double StartSpan(Span span, ActivityContext parentContext, List<Span> otherSpans
     using var activity = tracer.StartActivity(span.Name, span.Kind, parentContext, null, null, DateTime.UtcNow.AddMilliseconds(delay));
     Debug.Assert(activity != null);
 
-    activity.SetStatus(span.Status.Code, span.Status.Message);
+    activity.SetStatus(span.Status.Code, span.Status.Description);
 
     foreach (var attribute in span.Attributes)
     {
