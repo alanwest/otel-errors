@@ -1,0 +1,169 @@
+[
+    {
+        "Description": "Root span has error, but child span has better details.",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 500 }
+                ],
+                "Status": { "StatusCode": "ERROR", "Description": "Internal Service Error" }
+            },
+            {
+                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "SpanKind": "internal"
+            },
+            { 
+                "Id": 3, "ParentId": 1,
+                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
+                "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
+            }
+        ]
+    },
+    {
+        "Description": "Root span has no error, but child span has error. (GraphQL)",
+        "Spans": [
+            {
+                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            {
+                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "SpanKind": "internal"
+            },
+            { 
+                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "client",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.response.status_code", "Value": "400" },
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                ],
+                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
+            }
+        ]
+    },
+    {
+        "Description": "Root span has no error, but multiple child span have errors.",
+        "Spans": [
+            {
+                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            { 
+                "Id": 2, "ParentId": 1,
+                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
+                "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
+            },
+            { 
+                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "client",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.response.status_code", "Value": "400" },
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                ],
+                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
+            }
+        ]
+    },
+    {
+        "Description": "Root span has no error, an exception bubbles up through two child spans. Leaf span is probably the most useful.",
+        "Spans": [
+            {
+                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            { 
+                "Id": 2, "ParentId": 1,
+                "Name": "DoSomeWork", "SpanKind": "internal"
+            },
+            { 
+                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "internal",
+                "Status": { "StatusCode": "ERROR", "Description": "SomeException" },
+                "Exceptions": [{ "Type": "SomeException", "Message": "Failure to make external call" }]
+            },
+            { 
+                "Id": 4, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.response.status_code", "Value": "400" },
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                ],
+                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
+            }
+        ]
+    },
+    {
+        "Description": "An HTTP call was retried.",
+        "Spans": [
+            {
+                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            { 
+                "Id": 2, "ParentId": 1,
+                "Name": "DoSomeWork", "SpanKind": "internal"
+            },
+            { 
+                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "internal"
+            },
+            { 
+                "Id": 4, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.response.status_code", "Value": "400" },
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                ],
+                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
+            },
+            { 
+                "Id": 5, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.response.status_code", "Value": "200" },
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "Exception exists but no span has status ERROR. This could be how we offer expected/ignored errors.",
+        "Spans": [
+            {
+                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            { 
+                "Id": 2, "ParentId": 1,
+                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
+            }
+        ]
+    }
+]
