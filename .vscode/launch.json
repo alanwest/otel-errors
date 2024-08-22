@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net8.0/otel-errors.dll",
+            "program": "${workspaceFolder}/bin/Debug/net8.0/OpenTelemetryErrors.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

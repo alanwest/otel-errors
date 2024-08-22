@@ -4,7 +4,7 @@
         "Spans": [
             {
                 "Id": 1,
-                "Name": "GET /Users", "SpanKind": "server",
+                "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -13,11 +13,11 @@
                 "Status": { "StatusCode": "ERROR", "Description": "Internal Service Error" }
             },
             {
-                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "SpanKind": "internal"
+                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "Kind": "internal"
             },
             { 
                 "Id": 3, "ParentId": 1,
-                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Name": "DoSomeWork", "Kind": "internal",
                 "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
                 "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
             }
@@ -27,7 +27,7 @@
         "Description": "Root span has no error, but child span has error. (GraphQL)",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Id": 1, "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -35,10 +35,10 @@
                 ]
             },
             {
-                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "SpanKind": "internal"
+                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "Kind": "internal"
             },
             { 
-                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "client",
+                "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "400" },
@@ -53,7 +53,7 @@
         "Description": "Root span has no error, but multiple child span have errors.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Id": 1, "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -62,12 +62,12 @@
             },
             { 
                 "Id": 2, "ParentId": 1,
-                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Name": "DoSomeWork", "Kind": "internal",
                 "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
                 "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
             },
             { 
-                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "client",
+                "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "400" },
@@ -82,7 +82,7 @@
         "Description": "Root span has no error, an exception bubbles up through two child spans. Leaf span is probably the most useful.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Id": 1, "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -91,15 +91,15 @@
             },
             { 
                 "Id": 2, "ParentId": 1,
-                "Name": "DoSomeWork", "SpanKind": "internal"
+                "Name": "DoSomeWork", "Kind": "internal"
             },
             { 
-                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "internal",
+                "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "internal",
                 "Status": { "StatusCode": "ERROR", "Description": "SomeException" },
                 "Exceptions": [{ "Type": "SomeException", "Message": "Failure to make external call" }]
             },
             { 
-                "Id": 4, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Id": 4, "ParentId": 3, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "400" },
@@ -114,7 +114,7 @@
         "Description": "An HTTP call was retried.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Id": 1, "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -123,13 +123,13 @@
             },
             { 
                 "Id": 2, "ParentId": 1,
-                "Name": "DoSomeWork", "SpanKind": "internal"
+                "Name": "DoSomeWork", "Kind": "internal"
             },
             { 
-                "Id": 3, "ParentId": 1, "Name": "POST", "SpanKind": "internal"
+                "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "internal"
             },
             { 
-                "Id": 4, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Id": 4, "ParentId": 3, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "400" },
@@ -139,7 +139,7 @@
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
             },
             { 
-                "Id": 5, "ParentId": 3, "Name": "POST", "SpanKind": "client",
+                "Id": 5, "ParentId": 3, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "200" },
@@ -152,7 +152,7 @@
         "Description": "Exception exists but no span has status ERROR. This could be how we offer expected/ignored errors.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "SpanKind": "server",
+                "Id": 1, "Name": "GET /Users", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
                     { "Key": "http.route", "Value": "/Users" },
@@ -161,7 +161,7 @@
             },
             { 
                 "Id": 2, "ParentId": 1,
-                "Name": "DoSomeWork", "SpanKind": "internal",
+                "Name": "DoSomeWork", "Kind": "internal",
                 "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
             }
         ]
