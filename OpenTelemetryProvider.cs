@@ -9,8 +9,6 @@ using OpenTelemetry.Trace;
 
 public class OpenTelemetryProvider : IDisposable
 {
-    private const string instrumentationScopeName = "my.instrumentation.scope";
-
     private TracerProvider tracerProvider;
     private MeterProvider meterProvider;
     private readonly ILoggerFactory loggerFactory;
@@ -20,7 +18,7 @@ public class OpenTelemetryProvider : IDisposable
     private readonly Histogram<double> httpClientRequestDuration;
     private readonly ILogger logger;
 
-    public OpenTelemetryProvider(string serviceName)
+    public OpenTelemetryProvider(string serviceName, string instrumentationScopeName)
     {
         this.tracerProvider = Sdk.CreateTracerProviderBuilder()
             .ConfigureResource(builder =>
@@ -28,6 +26,7 @@ public class OpenTelemetryProvider : IDisposable
                 builder.AddService(serviceName);
             })
             .AddSource(instrumentationScopeName)
+            .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(0.5)))
             .AddOtlpExporter()
             .Build();
 

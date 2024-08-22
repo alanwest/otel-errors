@@ -7,8 +7,9 @@ if (string.IsNullOrEmpty(apiKey) || apiKey.Contains("YOUR_API_KEY_HERE"))
     throw new Exception("Set your API key in the .env file");
 }
 
-using var localOpenTelemetryProvider = new OpenTelemetryProvider("otel-errors");
-using var remoteOpenTelemetryProvider = new OpenTelemetryProvider("otel-errors-downstream");
+var UnsampledParentContext = new ActivityContext(ActivityTraceId.CreateRandom(), ActivitySpanId.CreateRandom(), ActivityTraceFlags.None, null, true);
+using var localOpenTelemetryProvider = new OpenTelemetryProvider("otel-errors", "instrumentation.scope.local");
+using var remoteOpenTelemetryProvider = new OpenTelemetryProvider("otel-errors-downstream", "instrumentation.scope.remote");
 
 var scenarios = Telemetry.GetScenarios();
 for (;;)
@@ -22,7 +23,7 @@ for (;;)
             StartSpan(span, default, spans, 0);
         }
     }
-    Thread.Sleep(500);
+    Thread.Sleep(2000);
 }
 
 double StartSpan(Span span, ActivityContext parentContext, List<Span> otherSpans, double delay)
@@ -39,18 +40,17 @@ double StartSpan(Span span, ActivityContext parentContext, List<Span> otherSpans
     var logger = provider.Logger;
 
     using var activity = tracer.StartActivity(span.Name, span.Kind, parentContext, null, null, DateTime.UtcNow.AddMilliseconds(delay));
-    Debug.Assert(activity != null);
 
-    activity.SetStatus(span.Status.Code, span.Status.Description);
+    activity?.SetStatus(span.Status.Code, span.Status.Description);
 
     foreach (var attribute in span.Attributes)
     {
-        activity.SetTag(attribute.Key, attribute.Value);
+        activity?.SetTag(attribute.Key, attribute.Value);
     }
 
     foreach (var exception in span.Exceptions)
     {
-        activity.AddEvent(new ActivityEvent("exception", default, new ActivityTagsCollection(
+        activity?.AddEvent(new ActivityEvent("exception", default, new ActivityTagsCollection(
             new Dictionary<string, object>
             {
                 { "exception.type", exception.Type },
@@ -78,21 +78,21 @@ double StartSpan(Span span, ActivityContext parentContext, List<Span> otherSpans
     foreach (var childSpan in childSpans)
     {
         childDuration += nextChildDelay;
-        childDuration += StartSpan(childSpan, activity.Context, otherSpans, childDuration);
+        childDuration += StartSpan(childSpan, activity?.Context ?? UnsampledParentContext, otherSpans, childDuration);
         nextChildDelay = TimeSpan.FromMilliseconds(Random.Shared.Next(10, 30)).TotalMilliseconds;
     }
 
     var duration = childDuration + TimeSpan.FromMilliseconds(Random.Shared.Next(10, 50)).TotalMilliseconds;
-    activity.SetEndTime(activity.StartTimeUtc.AddMilliseconds(duration));
+    activity?.SetEndTime(activity.StartTimeUtc.AddMilliseconds(duration));
 
-    if (activity.Kind == ActivityKind.Server)
+    if (activity?.Kind == ActivityKind.Server)
     {
-        provider.RecordHttpServerRequestDuration(activity.Duration, span.Attributes);
+        provider.RecordHttpServerRequestDuration(TimeSpan.FromMilliseconds(duration), span.Attributes);
     }
 
-    if (activity.Kind == ActivityKind.Client)
+    if (activity?.Kind == ActivityKind.Client)
     {
-        provider.RecordHttpClientRequestDuration(activity.Duration, span.Attributes);
+        provider.RecordHttpClientRequestDuration(TimeSpan.FromMilliseconds(duration), span.Attributes);
     }
 
     return duration;
