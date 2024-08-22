@@ -10,5 +10,4 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
 FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine AS final
 WORKDIR /app
 COPY --from=build /app .
-USER $APP_UID
 ENTRYPOINT ["dotnet", "OpenTelemetryErrors.dll"]
