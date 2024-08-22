@@ -42,7 +42,7 @@ public class Span
 public class Status
 {
     public ActivityStatusCode Code { get; set; }
-    public string? Message { get; set; }
+    public string? Description { get; set; }
 }
 
 public class ExceptionEvent

@@ -10,7 +10,7 @@
                     { "Key": "http.route", "Value": "/Users" },
                     { "Key": "http.response.status_code", "Value": 500 }
                 ],
-                "Status": { "StatusCode": "ERROR", "Description": "Internal Service Error" }
+                "Status": { "Code": "ERROR", "Description": "Internal Service Error" }
             },
             {
                 "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "Kind": "internal"
@@ -18,7 +18,7 @@
             { 
                 "Id": 3, "ParentId": 1,
                 "Name": "DoSomeWork", "Kind": "internal",
-                "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
+                "Status": { "Code": "ERROR", "Description": "DivideByZero" },
                 "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
             }
         ]
@@ -44,7 +44,7 @@
                     { "Key": "http.response.status_code", "Value": "400" },
                     { "Key": "server.address", "Value": "https://www.newrelic.com" }
                 ],
-                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Status": { "Code": "ERROR", "Description": "HttpException" },
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
             }
         ]
@@ -63,7 +63,7 @@
             { 
                 "Id": 2, "ParentId": 1,
                 "Name": "DoSomeWork", "Kind": "internal",
-                "Status": { "StatusCode": "ERROR", "Description": "DivideByZero" },
+                "Status": { "Code": "ERROR", "Description": "DivideByZero" },
                 "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
             },
             { 
@@ -73,7 +73,7 @@
                     { "Key": "http.response.status_code", "Value": "400" },
                     { "Key": "server.address", "Value": "https://www.newrelic.com" }
                 ],
-                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Status": { "Code": "ERROR", "Description": "HttpException" },
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
             }
         ]
@@ -95,7 +95,7 @@
             },
             { 
                 "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "internal",
-                "Status": { "StatusCode": "ERROR", "Description": "SomeException" },
+                "Status": { "Code": "ERROR", "Description": "SomeException" },
                 "Exceptions": [{ "Type": "SomeException", "Message": "Failure to make external call" }]
             },
             { 
@@ -105,7 +105,7 @@
                     { "Key": "http.response.status_code", "Value": "400" },
                     { "Key": "server.address", "Value": "https://www.newrelic.com" }
                 ],
-                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Status": { "Code": "ERROR", "Description": "HttpException" },
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
             }
         ]
@@ -135,7 +135,7 @@
                     { "Key": "http.response.status_code", "Value": "400" },
                     { "Key": "server.address", "Value": "https://www.newrelic.com" }
                 ],
-                "Status": { "StatusCode": "ERROR", "Description": "HttpException" },
+                "Status": { "Code": "ERROR", "Description": "HttpException" },
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]
             },
             { 
