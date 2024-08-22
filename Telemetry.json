@@ -4,10 +4,10 @@
         "Spans": [
             {
                 "Id": 1,
-                "Name": "GET /Users", "Kind": "server",
+                "Name": "GET /Scenario1", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario1" },
                     { "Key": "http.response.status_code", "Value": 500 }
                 ],
                 "Status": { "Code": "ERROR", "Description": "Internal Service Error" }
@@ -24,13 +24,13 @@
         ]
     },
     {
-        "Description": "Root span has no error, but child span has error. (GraphQL)",
+        "Description": "Root span has no error, but child span has error. (e.g., GraphQL)",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "Kind": "server",
+                "Id": 1, "Name": "GET /Scenario2", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario2" },
                     { "Key": "http.response.status_code", "Value": 200 }
                 ]
             },
@@ -53,10 +53,10 @@
         "Description": "Root span has no error, but multiple child span have errors.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "Kind": "server",
+                "Id": 1, "Name": "GET /Scenario3", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario3" },
                     { "Key": "http.response.status_code", "Value": 200 }
                 ]
             },
@@ -82,10 +82,10 @@
         "Description": "Root span has no error, an exception bubbles up through two child spans. Leaf span is probably the most useful.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "Kind": "server",
+                "Id": 1, "Name": "GET /Scenario4", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario4" },
                     { "Key": "http.response.status_code", "Value": 200 }
                 ]
             },
@@ -114,10 +114,10 @@
         "Description": "An HTTP call was retried.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "Kind": "server",
+                "Id": 1, "Name": "GET /Scenario5", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario5" },
                     { "Key": "http.response.status_code", "Value": 200 }
                 ]
             },
@@ -126,7 +126,8 @@
                 "Name": "DoSomeWork", "Kind": "internal"
             },
             { 
-                "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "internal"
+                "Id": 3, "ParentId": 1,
+                "Name": "Authenticate", "Kind": "internal"
             },
             { 
                 "Id": 4, "ParentId": 3, "Name": "POST", "Kind": "client",
@@ -152,17 +153,52 @@
         "Description": "Exception exists but no span has status ERROR. This could be how we offer expected/ignored errors.",
         "Spans": [
             {
-                "Id": 1, "Name": "GET /Users", "Kind": "server",
+                "Id": 1, "Name": "GET /Scenario6", "Kind": "server",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "GET" },
-                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.route", "Value": "/Scenario6" },
                     { "Key": "http.response.status_code", "Value": 200 }
                 ]
             },
             { 
                 "Id": 2, "ParentId": 1,
                 "Name": "DoSomeWork", "Kind": "internal",
-                "Exceptions": [{ "Type": "DivideByZero", "Message": "You divided by zero." }]
+                "Exceptions": [{ "Type": "ExpectedException", "Message": "Were you expecting me?" }]
+            }
+        ]
+    },
+    {
+        "Description": "Consumer",
+        "Spans": [
+            {
+                "Id": 1, "Name": "POST /Produce", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.route", "Value": "/Produce" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            },
+            { 
+                "Id": 2, "ParentId": 1,
+                "Name": "send shop.orders", "Kind": "producer",
+                "Attributes": [
+                    { "Key": "messaging.system", "Value": "kafka" },
+                    { "Key": "messaging.operation.name", "Value": "send" },
+                    { "Key": "messaging.destination.name", "Value": "shop.orders" },
+                    { "Key": "messaging.operation.type", "Value": "create" }
+                ]
+            },
+            { 
+                "Id": 3, "ParentId": 2, "IsRemoteParent": true,
+                "Name": "receive shop.orders", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.system", "Value": "kafka" },
+                    { "Key": "messaging.operation.name", "Value": "receive" },
+                    { "Key": "messaging.destination.name", "Value": "shop.orders" },
+                    { "Key": "messaging.operation.type", "Value": "process" }
+                ],
+                "Status": { "Code": "ERROR" },
+                "Exceptions": [{ "Type": "BadMessage", "Message": "The message was malformed." }]
             }
         ]
     }
