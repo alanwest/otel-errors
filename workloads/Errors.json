@@ -35,14 +35,25 @@
                 ]
             },
             {
-                "Id": 2, "ParentId": 1, "Name": "DoSomeWork", "Kind": "internal"
+                "Id": 2, "ParentId": 1, "Name": "MakeDbCall", "Kind": "client",
+                "Attributes": [
+                    { "Key": "db.system", "Value": "mysql" },
+                    { "Key": "db.operation", "Value": "SELECT" },
+                    { "Key": "db.sql.table", "Value": "Users" },
+                    { "Key": "net.peer.name", "Value": "127.0.0.1" },
+                    { "Key": "db.name", "Value": "UsersDB" },
+                    { "Key": "net.peer.port", "Value": "3339" },
+                    { "Key": "db.connection_string", "Value": "db=UsersDB;server=127.0.0.1" }
+                ]
             },
             { 
                 "Id": 3, "ParentId": 1, "Name": "POST", "Kind": "client",
                 "Attributes": [
                     { "Key": "http.request.method", "Value": "POST" },
                     { "Key": "http.response.status_code", "Value": "400" },
-                    { "Key": "server.address", "Value": "https://www.newrelic.com" }
+                    { "Key": "server.address", "Value": "https://www.newrelic.com" },
+                    { "Key": "error.class", "Value": "HttpException" },
+                    { "Key": "error.message", "Value": "Bad Request" }
                 ],
                 "Status": { "Code": "ERROR", "Description": "HttpException" },
                 "Exceptions": [{ "Type": "HttpException", "Message": "Bad Request" }]

@@ -18,12 +18,16 @@ public class OpenTelemetryProvider : IDisposable
     private readonly Histogram<double> httpClientRequestDuration;
     private readonly ILogger logger;
 
-    public OpenTelemetryProvider(string serviceName, string instrumentationScopeName)
+    public OpenTelemetryProvider(string serviceName, string instrumentationScopeName, IEnumerable<KeyValuePair<string, object>>? additionalResourceAttributes = null)
     {
         this.tracerProvider = Sdk.CreateTracerProviderBuilder()
             .ConfigureResource(builder =>
             {
                 builder.AddService(serviceName);
+                if (additionalResourceAttributes != null)
+                {
+                    builder.AddAttributes(additionalResourceAttributes);
+                }
             })
             .AddSource(instrumentationScopeName)
             .SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(0.5)))
@@ -34,6 +38,10 @@ public class OpenTelemetryProvider : IDisposable
             .ConfigureResource(builder =>
             {
                 builder.AddService(serviceName);
+                if (additionalResourceAttributes != null)
+                {
+                    builder.AddAttributes(additionalResourceAttributes);
+                }
             })
             .AddMeter(instrumentationScopeName)
             .AddOtlpExporter()
@@ -43,8 +51,14 @@ public class OpenTelemetryProvider : IDisposable
         {
             builder.AddOpenTelemetry(logging =>
             {
+                var resourceBuilder = ResourceBuilder.CreateDefault().AddService(serviceName);
+                if (additionalResourceAttributes != null)
+                {
+                    resourceBuilder.AddAttributes(additionalResourceAttributes);
+                }
+
                 logging
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName))
+                    .SetResourceBuilder(resourceBuilder)
                     .AddOtlpExporter();
             });
         });

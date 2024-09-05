@@ -13,10 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Telemetry.json">
-      <LogicalName>Telemetry.json</LogicalName>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="workloads/*.json" />
     <Content Include="OTEL_DIAGNOSTICS.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -2,20 +2,60 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
-public class Telemetry
+public class Workloads
 {
+    private readonly Workload[] workloads;
+
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = true,
         Converters = { new JsonStringEnumConverter() },
     };
-    
-    public static Scenario[] GetScenarios()
+
+    private static readonly Regex WorkloadRegex = new(@"^.*\..*\.(?<name>.*)\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    public Workloads()
     {
+        var workloads = new List<Workload>();
         var assembly = Assembly.GetExecutingAssembly();
-        var resource = assembly.GetManifestResourceStream("Telemetry.json");
-        return JsonSerializer.Deserialize<Scenario[]>(resource!, JsonSerializerOptions)!;
+        var manifestResourceNames = assembly.GetManifestResourceNames().Where(x => x.Contains(".workloads."));
+        Debug.Assert(manifestResourceNames.Any());
+
+        foreach (var name in manifestResourceNames)
+        {
+            var workloadJson = assembly.GetManifestResourceStream(name);
+            var match = WorkloadRegex.Match(name);
+            Debug.Assert(match != null);
+            Debug.Assert(match.Success);
+
+            var workloadName = match.Groups["name"].Value;
+            var scenarios = JsonSerializer.Deserialize<Scenario[]>(workloadJson!, JsonSerializerOptions)!;
+            workloads.Add(new Workload(workloadName, scenarios));
+        }
+
+        this.workloads = workloads.ToArray();
+    }
+
+    public Workload this[string name]
+    {
+        get
+        {
+            return workloads.First(x => x.WorkloadName == name);
+        }
+    }
+}
+
+public class Workload
+{
+    public string WorkloadName { get; private set; }
+    public Scenario[] Scenarios { get; private set; }
+
+    public Workload(string workloadName, Scenario[] scenarios)
+    {
+        this.WorkloadName = workloadName;
+        this.Scenarios = scenarios;
     }
 }
 
