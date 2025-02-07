@@ -1,0 +1,30 @@
+[
+    {
+        "Description": "Funky Segment Breakdown",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "GET /SomeRoute", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/SomeRoute" }
+                ]
+            },
+            {
+                "ParentId": 1, "Name": "DoSomeLongWork", "Kind": "internal", "Async": true, "Duration": 1000, "ExportSpan": false
+            },
+            {
+                "ParentId": 1, "Name": "DoSomeWork1", "Kind": "internal"
+            },
+            {
+                "ParentId": 1, "Name": "DoSomeWork2", "Kind": "internal"
+            },
+            {
+                "ParentId": 1, "Name": "DoSomeWork3", "Kind": "internal", "Duration": 100
+            },
+            {
+                "ParentId": 1, "Name": "DoSomeWork4", "Kind": "internal"
+            }
+        ]
+    }
+]

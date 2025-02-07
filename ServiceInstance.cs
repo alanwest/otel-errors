@@ -81,28 +81,45 @@ public class ServiceInstance
 
         otherSpans.Remove(span);
         var childSpans = otherSpans.Where(x => x.ParentId == span.Id).ToArray();
-        double childDuration = 0;
+        double syncChildDuration = 0;
+        double asyncChildDuration = 0;
         double nextChildDelay = TimeSpan.FromMilliseconds(Random.Shared.Next(10, 30)).TotalMilliseconds;
         foreach (var childSpan in childSpans)
         {
-            childDuration += nextChildDelay;
-            childDuration += StartSpan(childSpan, activity?.Context ?? UnsampledParentContext, otherSpans, childDuration);
+            var childDuration = StartSpan(childSpan, activity?.Context ?? UnsampledParentContext, otherSpans, nextChildDelay);
+            if (childSpan.Async)
+            {
+                asyncChildDuration += childDuration;
+            }
+            else
+            {
+                syncChildDuration += childDuration;
+            }
+
             nextChildDelay = TimeSpan.FromMilliseconds(Random.Shared.Next(10, 30)).TotalMilliseconds;
         }
 
-        var duration = childDuration + TimeSpan.FromMilliseconds(Random.Shared.Next(10, 50)).TotalMilliseconds;
-        activity?.SetEndTime(activity.StartTimeUtc.AddMilliseconds(duration));
+        var exclusiveDuration = span.Duration.HasValue
+            ? span.Duration.Value
+            : TimeSpan.FromMilliseconds(Random.Shared.Next(10, 50)).TotalMilliseconds;
+        var totalDuration = syncChildDuration + exclusiveDuration;
+        activity?.SetEndTime(activity.StartTimeUtc.AddMilliseconds(totalDuration));
+
+        if (!span.ExportSpan && activity != null)
+        {
+            activity.ActivityTraceFlags &= ~ActivityTraceFlags.Recorded;
+        }
 
         if (activity?.Kind == ActivityKind.Server)
         {
-            provider.RecordHttpServerRequestDuration(TimeSpan.FromMilliseconds(duration), span.Attributes);
+            provider.RecordHttpServerRequestDuration(TimeSpan.FromMilliseconds(totalDuration + asyncChildDuration), span.Attributes);
         }
 
         if (activity?.Kind == ActivityKind.Client && !activity.Tags.Any(x => x.Key == "db.system"))
         {
-            provider.RecordHttpClientRequestDuration(TimeSpan.FromMilliseconds(duration), span.Attributes);
+            provider.RecordHttpClientRequestDuration(TimeSpan.FromMilliseconds(totalDuration), span.Attributes);
         }
 
-        return duration;
+        return totalDuration;
     }
 }

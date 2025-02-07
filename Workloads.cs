@@ -72,6 +72,9 @@ public class Span
     public int ParentId { get; set; }
     public bool IsRemoteParent { get; set; }
     public string Name { get; set; } = string.Empty;
+    public int? Duration { get; set; }
+    public bool ExportSpan { get; set; } = true;
+    public bool Async { get; set; }
     public ActivityKind Kind { get; set; }
     public Status Status { get; set; } = DefaultStatus;
     public KeyValuePair<string, object>[] Attributes { get; set; } = Array.Empty<KeyValuePair<string, object>>();

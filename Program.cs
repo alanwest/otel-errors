@@ -9,6 +9,9 @@ var workloads = new Workloads();
 var services = new ServiceInstance[]
 {
     new ServiceInstance(workloads["Errors"], "otel-errors"),
+    // new ServiceInstance(workloads["Errors"], "entity-apm-application",
+    //     [new KeyValuePair<string, object>("newrelic.entity.type", "apm")]),
+    // new ServiceInstance(workloads["FunkySegmentBreakdown"], "segment-breakdown"),
 };
 
 var tasks = new List<Task>();
