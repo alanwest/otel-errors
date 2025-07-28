@@ -16,6 +16,7 @@ public class OpenTelemetryProvider : IDisposable
     private readonly Meter meter;
     private readonly Histogram<double> httpServerRequestDuration;
     private readonly Histogram<double> httpClientRequestDuration;
+    private readonly Histogram<double> dbOperationDuration;
     private readonly ILogger logger;
 
     public OpenTelemetryProvider(string serviceName, string instrumentationScopeName, IEnumerable<KeyValuePair<string, object>>? additionalResourceAttributes = null)
@@ -67,6 +68,7 @@ public class OpenTelemetryProvider : IDisposable
         this.meter = new Meter(instrumentationScopeName);
         this.httpServerRequestDuration = this.meter.CreateHistogram<double>("http.server.request.duration", "s", "Duration of HTTP server requests.");
         this.httpClientRequestDuration = this.meter.CreateHistogram<double>("http.client.request.duration", "s", "Duration of HTTP client requests.");
+        this.dbOperationDuration = this.meter.CreateHistogram<double>("db.client.operation.duration", "s", "Duration of database client calls.");
         this.logger = loggerFactory.CreateLogger<Program>();
     }
 
@@ -87,6 +89,14 @@ public class OpenTelemetryProvider : IDisposable
             ? GenerateTagList(attributes, "http.request.method", "http.response.status_code", "server.address")
             : default;
         httpClientRequestDuration.Record(duration.TotalSeconds, tags);
+    }
+
+    internal void RecordDbOperationDuration(TimeSpan duration, KeyValuePair<string, object>[]? attributes)
+    {
+        var tags = attributes != null
+            ? GenerateTagList(attributes, "db.system.name", "db.query.summary", "db.operation.name", "db.collection.name", "db.stored_procedure.name")
+            : default;
+        dbOperationDuration.Record(duration.TotalSeconds, tags);
     }
 
     public void Dispose()

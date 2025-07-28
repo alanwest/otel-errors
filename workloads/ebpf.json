@@ -1,0 +1,58 @@
+[
+    {
+        "Description": "Web transaction",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "GET /SomeRoute", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/SomeRoute" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "Other transaction",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "consume MyTopic", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.operation", "Value": "consume" },
+                    { "Key": "messaging.destination.name", "Value": "MyTopic" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "Database call",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "SELECT foo", "Kind": "client",
+                "Attributes": [
+                    { "Key": "db.system", "Value": "mysql" },
+                    { "Key": "db.operation", "Value": "SELECT" },
+                    { "Key": "db.sql.table", "Value": "foo" },
+                    { "Key": "db.statement", "Value": "SELECT * FROM foo" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "Database call",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "SELECT bar", "Kind": "client",
+                "Attributes": [
+                    { "Key": "db.system", "Value": "mysql" },
+                    { "Key": "db.operation", "Value": "SELECT" },
+                    { "Key": "db.sql.table", "Value": "bar" },
+                    { "Key": "db.statement", "Value": "SELECT * FROM bar" }
+                ]
+            }
+        ]
+    }
+]

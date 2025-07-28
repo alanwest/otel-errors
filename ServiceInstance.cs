@@ -11,7 +11,7 @@ public class ServiceInstance
 
     public ServiceInstance(Workload workload, string serviceName, IEnumerable<KeyValuePair<string, object>>? additionalResourceAttributes = null)
     {
-        this.openTelemetryProvider = new OpenTelemetryProvider(serviceName, serviceName + ".instrumentation.scope");
+        this.openTelemetryProvider = new OpenTelemetryProvider(serviceName, serviceName + ".instrumentation.scope", additionalResourceAttributes);
         this.workload = workload;
     }
 
@@ -115,9 +115,14 @@ public class ServiceInstance
             provider.RecordHttpServerRequestDuration(TimeSpan.FromMilliseconds(totalDuration + asyncChildDuration), span.Attributes);
         }
 
-        if (activity?.Kind == ActivityKind.Client && !activity.Tags.Any(x => x.Key == "db.system"))
+        if (activity?.Kind == ActivityKind.Client && !activity.TagObjects.Any(x => x.Key == "db.system" || x.Key == "db.system.name"))
         {
             provider.RecordHttpClientRequestDuration(TimeSpan.FromMilliseconds(totalDuration), span.Attributes);
+        }
+
+        if (activity != null && activity.TagObjects.Any(x => x.Key == "db.system.name"))
+        {
+            provider.RecordDbOperationDuration(TimeSpan.FromMilliseconds(totalDuration), span.Attributes);
         }
 
         return totalDuration;
