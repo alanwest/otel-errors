@@ -1,0 +1,144 @@
+[
+    {
+        "Description": "transaction.name = WebTransaction/server/GET /Users",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "GET /Users", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/GET /Users",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "Custom span name", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/POST /Users",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "POST /Users", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "POST" },
+                    { "Key": "http.route", "Value": "/Users" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/GET",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "Custom span name", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.request.method", "Value": "GET" },
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/unknown",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "Foo", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/unknown",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "Bar", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = WebTransaction/server/unknown",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "", "Kind": "server",
+                "Attributes": [
+                    { "Key": "http.response.status_code", "Value": 200 }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = OtherTransaction/consumer/process//customers/{customerId}",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "/customers/{customerId} process", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.operation", "Value": "process" },
+                    { "Key": "messaging.destination.template", "Value": "/customers/{customerId}" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = OtherTransaction/consumer/process/MyTopic",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "MyTopic process", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.operation", "Value": "process" },
+                    { "Key": "messaging.destination.name", "Value": "MyTopic" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = OtherTransaction/consumer/process/MyTopic",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "Custom span name", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.operation", "Value": "process" },
+                    { "Key": "messaging.destination.name", "Value": "MyTopic" }
+                ]
+            }
+        ]
+    },
+    {
+        "Description": "transaction.name = OtherTransaction/consumer/unknown",
+        "Spans": [
+            {
+                "Id": 1,
+                "Name": "/customers/{customerId}", "Kind": "consumer",
+                "Attributes": [
+                    { "Key": "messaging.destination.template", "Value": "/customers/{customerId}" }
+                ]
+            }
+        ]
+    }
+]

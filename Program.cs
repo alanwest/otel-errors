@@ -8,8 +8,9 @@ var workloads = new Workloads();
 
 var services = new ServiceInstance[]
 {
-    new ServiceInstance(workloads["database"], "otel-database",
-        [new KeyValuePair<string, object>("newrelic.dev_mode", true)]),
+    new ServiceInstance(workloads["transaction_name"], "otel-transaction-names"),
+    // new ServiceInstance(workloads["database"], "otel-database",
+    //     [new KeyValuePair<string, object>("newrelic.dev_mode", true)]),
     // new ServiceInstance(workloads["Errors"], "otel-errors"),
     // new ServiceInstance(workloads["ebpf"], "ebpf-db",
     //     [new KeyValuePair<string, object>("instrumentation.name", "nr_ebpf")]),
